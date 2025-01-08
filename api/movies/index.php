@@ -15,41 +15,70 @@ if ($requestMethod === 'GET') {
 
     if ($id) {
         $stmt = $conn->prepare("
-            SELECT m.id, m.title, m.year, m.director, m.image, m.rating, m.synopsis,
-                   GROUP_CONCAT(DISTINCT g.title SEPARATOR ', ') AS genres,
-                   GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS actors
+            SELECT m.id, m.title, m.year, m.director, m.image, m.rating, m.synopsis
             FROM movies m
-            LEFT JOIN movie_genre mg ON m.id = mg.movie_id
-            LEFT JOIN genre g ON mg.genre_id = g.id
-            LEFT JOIN movie_actor ma ON m.id = ma.movie_id
-            LEFT JOIN people p ON ma.actor_id = p.id
             WHERE m.id = :id
-            GROUP BY m.id
         ");
         $stmt->execute(['id' => $id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $movie = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$result) {
+        if (!$movie) {
             http_response_code(404);
             echo json_encode(["error" => "Movie not found"]);
             exit;
         }
-        echo json_encode($result);
+
+        $stmt = $conn->prepare("
+            SELECT g.id, g.title
+            FROM genre g
+            JOIN movie_genre mg ON g.id = mg.genre_id
+            WHERE mg.movie_id = :id
+        ");
+        $stmt->execute(['id' => $id]);
+        $genres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt = $conn->prepare("
+            SELECT p.id, p.name
+            FROM people p
+            JOIN movie_actor ma ON p.id = ma.actor_id
+            WHERE ma.movie_id = :id
+        ");
+        $stmt->execute(['id' => $id]);
+        $actors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $movie['genres'] = $genres;
+        $movie['actors'] = $actors;
+
+        echo json_encode($movie);
     } else {
         $stmt = $conn->prepare("
-            SELECT m.id, m.title, m.year, m.director, m.image, m.rating, m.synopsis,
-                   GROUP_CONCAT(DISTINCT g.title SEPARATOR ', ') AS genres,
-                   GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS actors
+            SELECT m.id, m.title, m.year, m.director, m.image, m.rating, m.synopsis
             FROM movies m
-            LEFT JOIN movie_genre mg ON m.id = mg.movie_id
-            LEFT JOIN genre g ON mg.genre_id = g.id
-            LEFT JOIN movie_actor ma ON m.id = ma.movie_id
-            LEFT JOIN people p ON ma.actor_id = p.id
-            GROUP BY m.id
         ");
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($result);
+        $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($movies as &$movie) {
+            $stmt = $conn->prepare("
+                SELECT g.id, g.title
+                FROM genre g
+                JOIN movie_genre mg ON g.id = mg.genre_id
+                WHERE mg.movie_id = :id
+            ");
+            $stmt->execute(['id' => $movie['id']]);
+            $movie['genres'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmt = $conn->prepare("
+                SELECT p.id, p.name
+                FROM people p
+                JOIN movie_actor ma ON p.id = ma.actor_id
+                WHERE ma.movie_id = :id
+            ");
+            $stmt->execute(['id' => $movie['id']]);
+            $movie['actors'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        echo json_encode($movies);
     }
 } elseif ($requestMethod === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -66,15 +95,31 @@ if ($requestMethod === 'GET') {
         'synopsis' => $data['synopsis'],
         'image' => $data['image']
     ]);
-    echo json_encode(["message" => "Movie added successfully"]);
-}     elseif ($requestMethod === 'PUT') {
+    $movieId = $conn->lastInsertId();
+
+    if (!empty($data['genres'])) {
+        $stmt = $conn->prepare("INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movieId, :genreId)");
+        foreach ($data['genres'] as $genreId) {
+            $stmt->execute(['movieId' => $movieId, 'genreId' => $genreId]);
+        }
+    }
+
+    if (!empty($data['actors'])) {
+        $stmt = $conn->prepare("INSERT INTO movie_actor (movie_id, actor_id) VALUES (:movieId, :actorId)");
+        foreach ($data['actors'] as $actorId) {
+            $stmt->execute(['movieId' => $movieId, 'actorId' => $actorId]);
+        }
+    }
+
+    echo json_encode(["success" => true, "message" => "Movie added successfully", "id" => $movieId]);
+} elseif ($requestMethod === 'PUT') {
     $data = json_decode(file_get_contents("php://input"), true);
     $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
-    error_log("PUT Data: " . print_r($data, true));
-
     if (!$id || !isset($data['title']) || !isset($data['year'])) {
-        throw new Exception("Invalid ID or missing fields.");
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid ID or missing fields."]);
+        exit;
     }
 
     $stmt = $conn->prepare("
@@ -93,7 +138,8 @@ if ($requestMethod === 'GET') {
         'id' => $id
     ]);
 
-    $conn->prepare("DELETE FROM movie_genre WHERE movie_id = :id")->execute(['id' => $id]);
+    $stmt = $conn->prepare("DELETE FROM movie_genre WHERE movie_id = :id");
+    $stmt->execute(['id' => $id]);
     if (!empty($data['genres'])) {
         $stmt = $conn->prepare("INSERT INTO movie_genre (movie_id, genre_id) VALUES (:movieId, :genreId)");
         foreach ($data['genres'] as $genreId) {
@@ -101,7 +147,8 @@ if ($requestMethod === 'GET') {
         }
     }
 
-    $conn->prepare("DELETE FROM movie_actor WHERE movie_id = :id")->execute(['id' => $id]);
+    $stmt = $conn->prepare("DELETE FROM movie_actor WHERE movie_id = :id");
+    $stmt->execute(['id' => $id]);
     if (!empty($data['actors'])) {
         $stmt = $conn->prepare("INSERT INTO movie_actor (movie_id, actor_id) VALUES (:movieId, :actorId)");
         foreach ($data['actors'] as $actorId) {

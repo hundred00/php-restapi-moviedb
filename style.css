@@ -74,6 +74,28 @@ h1 {
     text-align: center;
 }
 
+.favorite-btn {
+    color: gray;
+    cursor: pointer;
+    border: 1px solid #c7c7c7;
+    background-color: #b87070;
+    color: white;
+    border-radius: 10px;
+    padding: 5px;
+}
+.favorite-btn.favorite {
+    background-color: #eb0000;
+    font-weight: bold;
+}
+
+.favorite-btn::before {
+    content: "Favorite";
+}
+
+.favorite-btn.favorite::before {
+    content: "Unfavorite";
+}
+
 .movie {
     background: #fff;
     margin: 20px auto;
@@ -227,13 +249,13 @@ h1 {
     justify-content: space-between;
 }
 
-.edit-form-genereal {
-    display: flex;
+.edit-form-general {
+    display: flex !important;
     flex-direction: column;
     gap: 0.3em;
 }
 
-.edit-form-genereal input {
+.edit-form-general input {
     padding: 0.5em;
     min-width: 30em;
     border-radius: 3px;

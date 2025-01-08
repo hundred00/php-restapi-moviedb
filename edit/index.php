@@ -14,7 +14,8 @@ if (!$user || $user['is_admin'] != 1) {
     die("Access Denied. You must be an admin to view this page.");
 }
 
-function fetchDataFromApi($endpoint) {
+function fetchDataFromApi($endpoint)
+{
     $apiUrl = "http://localhost/movie-database/api/$endpoint";
     $response = file_get_contents($apiUrl);
     return json_decode($response, true);
@@ -73,23 +74,30 @@ $actors = fetchDataFromApi("people");
 
                         <div class="edit-form-dropdowns">
                             <label>Genres:</label>
-                            <div id="selectedGenres" class="list"></div>
-                            <select id="genreDropdown">
-                                <?php foreach ($genres as $genre): ?>
-                                    <option value="<?php echo $genre['id']; ?>"><?php echo htmlspecialchars($genre['title']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="button" onclick="addGenre()">Add</button>
+                            <div class="list-container">
+                                <div id="selectedGenres" class="list"></div>
+                                <div class="dropdown-button">
+                                    <select id="genreDropdown">
+                                        <?php foreach ($genres as $genre): ?>
+                                            <option value="<?php echo $genre['id']; ?>"><?php echo htmlspecialchars($genre['title']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="button" onclick="addGenre()">Add</button>
+                                </div>
+                            </div>
 
                             <label>Actors:</label>
-                            <div id="selectedActors" class="list"></div>
-                            <select id="actorDropdown">
-                                <?php foreach ($actors as $actor): ?>
-                                    <option value="<?php echo $actor['id']; ?>"><?php echo htmlspecialchars($actor['name']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="button" onclick="addActor()">Add</button>
-
+                            <div class="list-container">
+                                <div id="selectedActors" class="list"></div>
+                                <div class="dropdown-button">
+                                    <select id="actorDropdown">
+                                        <?php foreach ($actors as $actor): ?>
+                                            <option value="<?php echo $actor['id']; ?>"><?php echo htmlspecialchars($actor['name']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="button" onclick="addActor()">Add</button>
+                                </div>
+                            </div>
                             <div class="rating-slider">
                                 <label>Rating:</label>
                                 <input type="range" id="rating" min="1" max="5" step="1" value="3">

@@ -1,24 +1,15 @@
 <?php
 header('Content-Type: application/json');
-
 $targetDir = "../../images/posters/";
-$response = ["success" => false];
 
-if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
-    parse_str(file_get_contents("php://input"), $data);
-    $fileName = basename($data["filename"] ?? "");
-
-    $filePath = $targetDir . $fileName;
-
-    if ($fileName && file_exists($filePath)) {
-        unlink($filePath);
-        $response["success"] = true;
-        $response["message"] = "Image deleted.";
+if (isset($_GET['filename'])) {
+    $file = $targetDir . basename($_GET['filename']);
+    if (file_exists($file)) {
+        unlink($file);
+        echo json_encode(["success" => true, "message" => "File deleted."]);
     } else {
-        $response["message"] = "File not found.";
+        echo json_encode(["success" => false, "message" => "File not found."]);
     }
 } else {
-    $response["message"] = "Invalid request.";
+    echo json_encode(["success" => false, "message" => "No filename provided."]);
 }
-
-echo json_encode($response);

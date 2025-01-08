@@ -2,7 +2,7 @@ let selectedGenres = []
 let selectedActors = []
 let isCreatingNew = false
 let uploadedFileName = ""
-let deletedMovieData = null
+let imageInputTimeout
 
 const saveButton = document.getElementById("saveButton")
 const deleteButton = document.getElementById("deleteButton")
@@ -26,11 +26,11 @@ function enableSaveButton() {
 function resetForm() {
     document.getElementById("editForm").reset()
     document.getElementById("editingMovieName").innerText = "Editing: None"
+    imagePreview.src = "/movie-database/images/posters/poster-missing.jpg"
     selectedGenres = []
     selectedActors = []
     updateSelectedLists()
     disableSaveButton()
-    toggleCreateMode(false)
 }
 
 function toggleCreateMode(isNew) {
@@ -41,6 +41,12 @@ function toggleCreateMode(isNew) {
     deleteButton.style.display = isNew ? "none" : "inline-block"
     revertButton.style.display = "none"
     imagePreview.src = "/movie-database/images/posters/poster-missing.jpg"
+    document.getElementById("ratingValue").innerText = "3"
+
+    if (isNew) {
+        document.getElementById("movieId").value = "" // to make sure that we dont accidentally overwrite a previously clicked movie
+        resetForm()
+    }
 
     enableSaveButton()
 }
@@ -111,7 +117,10 @@ function updateImagePreview() {
     }
 }
 
-document.getElementById("image").addEventListener("input", updateImagePreview)
+document.getElementById("image").addEventListener("input", () => {
+    clearTimeout(imageInputTimeout)
+    imageInputTimeout = setTimeout(updateImagePreview, 500)
+})
 
 document.querySelectorAll(".movie-item").forEach(movie => {
     movie.addEventListener("click", async () => {

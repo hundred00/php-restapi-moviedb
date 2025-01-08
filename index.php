@@ -1,7 +1,20 @@
 <?php
+session_start();
+require_once "includes/db.php";
+
 $apiUrl = "http://localhost/movie-database/api/movies/index.php";
 $response = file_get_contents($apiUrl);
 $movies = json_decode($response, true);
+
+$isLoggedIn = isset($_SESSION["user_id"]);
+$userFavorites = [];
+
+if ($isLoggedIn) {
+    $stmt = $conn->prepare("SELECT favorites FROM users WHERE id = :id");
+    $stmt->execute(["id" => $_SESSION["user_id"]]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $userFavorites = $user['favorites'] ? explode(",", $user['favorites']) : [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -37,12 +50,18 @@ $movies = json_decode($response, true);
                         <p><strong>Director:</strong> <?php echo htmlspecialchars($movie["director"]); ?></p>
                         <p><strong>Genres:</strong>
                             <?php
-                            $genres = explode(', ', $movie["genres"]);
-                            $capitalizedGenres = array_map(fn($genre) => ucwords(strtolower($genre)), $genres);
-                            echo htmlspecialchars(implode(', ', $capitalizedGenres));
+                            $genres = $movie["genres"];
+                            $genreNames = array_map(fn($genre) => ucwords(strtolower($genre['title'])), $genres);
+                            echo htmlspecialchars(implode(', ', $genreNames));
                             ?>
                         </p>
-                        <p><strong>Actors:</strong> <?php echo htmlspecialchars($movie["actors"]); ?></p>
+                        <p><strong>Actors:</strong>
+                            <?php
+                            $actors = $movie["actors"];
+                            $actorNames = array_map(fn($actor) => htmlspecialchars($actor['name']), $actors);
+                            echo implode(', ', $actorNames);
+                            ?>
+                        </p>
                         <p class="rating"><strong>Rating:</strong>
                             <span class="rating-stars">
                                 <?php
@@ -53,6 +72,12 @@ $movies = json_decode($response, true);
                             </span>
                         </p>
                         <p><strong>Synopsis:</strong> <?php echo htmlspecialchars($movie["synopsis"]); ?></p>
+
+                        <?php if ($isLoggedIn): ?>
+                            <button class="favorite-btn <?php echo in_array($movie['id'], $userFavorites) ? 'favorite' : ''; ?>"
+                                data-id="<?php echo $movie['id']; ?>">
+                            </button>
+                        <?php endif; ?>
                     </section>
                     <section>
                         <img src="images/posters/<?php echo htmlspecialchars($movie["image"]); ?>" alt="Poster of <?php echo htmlspecialchars($movie["title"]); ?>">
@@ -63,6 +88,7 @@ $movies = json_decode($response, true);
     </main>
 
     <script src="scripts/movieFilter.js"></script>
+    <script src="scripts/favoriteToggle.js"></script>
 </body>
 
 </html>
