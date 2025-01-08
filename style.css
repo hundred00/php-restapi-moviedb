@@ -1,0 +1,372 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+    background-color: #333;
+    color: white;
+}
+
+nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav h2 {
+    margin: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.auth-button .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-button .login {
+    background-color: #007BFF;
+    color: white;
+}
+
+.auth-button .logout {
+    background-color: #DC3545;
+    color: white;
+}
+
+.auth-button .btn:hover {
+    opacity: 0.9;
+}
+
+h1 {
+    text-align: center;
+}
+
+.movie {
+    background: #fff;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5em;
+}
+
+.movie img {
+    max-width: 11em;
+    border-radius: 8px;
+}
+
+.movie-info-year {
+    font-size: medium;
+    color: gray;
+}
+
+.movie:hover {
+    transition: all 0.1s ease-out;
+    transform: scale(1.02);
+}
+
+.movie h2 {
+    margin-top: 0;
+}
+
+.rating {
+    display: flex;
+    gap: 0.5em;
+}
+
+.rating-stars img {
+    width: 20px;
+    height: 20px;
+    border-radius: 0px;
+}
+
+.rating-stars img {
+    width: 20px;
+    height: 20px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-container input,
+.search-container select {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.login-page form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.login-container input {
+    padding: 0.5em;
+    min-width: 30em;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    font-size: medium;
+    color: #999999;
+}
+
+.login-container label {
+    color: #404040;
+    font-size: medium;
+}
+
+.login-container button {
+    margin-top: 1em;
+    padding: 0.5em;
+    cursor: pointer;
+    background-color: #246ff0;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    color: white;
+    font-size: large;
+}
+
+.login-cancel-button {
+    padding: 0.5em;
+    cursor: pointer;
+    background-color: #eb3535;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    color: white;
+    font-size: large;
+    text-decoration: none;
+    display: block;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 0.3em;
+}
+
+.login-cancel-container {
+    text-align: center;
+}
+
+.login-container a {
+    color: #999999;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: small;
+}
+
+#editForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+#editForm button {
+    padding: 0.5em;
+    cursor: pointer;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    color: white;
+    font-size: large;
+    text-decoration: none;
+    display: block;
+}
+
+#saveButton {
+    background-color: #358bdc;
+}
+
+#deleteButton {
+    background-color: #DC3545;
+}
+
+#revertButton {
+    background-color: #41cc5f;
+}
+
+.edit-form-data {
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+}
+
+.edit-form-genereal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.edit-form-genereal input {
+    padding: 0.5em;
+    min-width: 30em;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    font-size: medium;
+    color: #686868;
+}
+
+.edit-form-synopsis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.edit-form-synopsis label {
+    font-weight: bold;
+}
+
+#synopsis {
+    width: 100%;
+    height: 100%;
+}
+
+#selectedGenres {
+    display: flex;
+    gap: 0.3em;
+}
+
+#selectedActors {
+    display: flex;
+    gap: 0.3em;
+}
+
+.edit-form-dropdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.edit-form-dropdowns label {
+    font-weight: bold;
+}
+
+.rating-slider {
+    display: flex;
+    gap: 0.2em;
+    justify-content: center;
+}
+
+.dropdown-button {
+    display: flex;
+    gap: 0.4em;
+}
+
+.dropdown-button  button {
+    padding: 0.5em;
+    border-radius: 3px;
+    border: solid 0.5px #cfcfcf;
+    font-size: medium;
+    background-color: #246ff0;
+}
+
+.edit-form-image {
+    display: flex;
+    flex-direction: column;
+}
+
+.movie-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.movie-item {
+    position: relative;
+    width: 150px;
+    height: 225px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
+}
+
+.movie-item:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transition: all 0.1s ease-out;
+}
+
+.movie-item:hover::after {
+    content: attr(data-hover);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.514);
+    transition: all 0.1s ease-out;
+}
+
+.movie-item[data-type="edit"]::after {
+    content: "Edit";
+}
+
+.movie-item[data-type="add"]::after {
+    content: "Add";
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 250px;
+    box-shadow: -12px -14px 43px 0px rgba(0,0,0,0.25);
+}
+
+.list-item:hover {
+    color: red;
+    cursor: pointer;
+    text-decoration: line-through;
+}
