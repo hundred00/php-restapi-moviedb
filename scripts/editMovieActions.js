@@ -196,10 +196,10 @@ async function deleteTempImage() {
     if (!uploadedFileName) return
 
     try {
-        const response = await fetch(`/movie-database/api/movies/delete_image.php`, {
-            method: "DELETE",
-            body: JSON.stringify({ filename: uploadedFileName })
+        const response = await fetch(`/movie-database/api/movies/delete_image.php?filename=${encodeURIComponent(uploadedFileName)}`, {
+            method: "DELETE"
         })
+
         const result = await response.json()
 
         if (result.success) {
